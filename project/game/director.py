@@ -4,6 +4,7 @@ import random
 from arcade import physics_engines
 from game import constants
 
+
 class Game(arcade.Window):
     """Infinite side scroller platform jumping game
     Player starts from the left and must continue
@@ -12,7 +13,7 @@ class Game(arcade.Window):
     evading the enemy."""
 
     def __init__(self, width, height, title):
-        
+
         super().__init__(width, height, title)
 
         self.platforms_list = arcade.SpriteList()
@@ -21,13 +22,15 @@ class Game(arcade.Window):
         self.is_paused = False
 
         self.setup()
-        self.physics_engine = arcade.PhysicsEnginePlatformer(self.player, self.platforms_list, gravity_constant=0.9)
+        self.physics_engine = arcade.PhysicsEnginePlatformer(
+            self.player, self.platforms_list, gravity_constant=0.9)
 
     def setup(self):
 
         arcade.set_background_color(arcade.color.SKY_BLUE)
 
-        self.player = arcade.Sprite("project\\art\character_ph.png", constants.SCALE)
+        self.player = arcade.Sprite(
+            "project\\art\character_ph.png", constants.SCALE)
         self.player.bottom = 65
         self.player.left = 10
         self.all_sprites.append(self.player)
@@ -40,18 +43,20 @@ class Game(arcade.Window):
         self.all_sprites.append(ground)
 
         offset = 0
-        for _ in range(5): # platforms still need to spawn outside of the screen
-            platform = arcade.Sprite("project\\art\platform_ph.png", constants.SCALE)
-            platform.top = random.randint(self.platforms_list[-1]._get_top() - (100 * constants.SCALE), self.platforms_list[-1]._get_top() + (100 * constants.SCALE))
+        for _ in range(5):  # platforms still need to spawn outside of the screen
+            platform = arcade.Sprite(
+                "project\\art\platform_ph.png", constants.SCALE)
+            platform.top = random.randint(self.platforms_list[-1]._get_top() - (
+                100 * constants.SCALE), self.platforms_list[-1]._get_top() + (100 * constants.SCALE))
             platform.left = self.width/2 + offset
-            if platform.bottom < 0 :
-                platform.top = self.platforms_list[-1]._get_top() + 100 * constants.SCALE
+            if platform.bottom < 0:
+                platform.top = self.platforms_list[-1]._get_top() + \
+                    100 * constants.SCALE
 
             self.platforms_list.append(platform)
             self.dynamic_sprites.append(platform)
             self.all_sprites.append(platform)
             offset += 116 * constants.SCALE
-
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.Q:
@@ -59,9 +64,9 @@ class Game(arcade.Window):
 
         if symbol == arcade.key.P:
             self.paused = not self.paused
-        
+
         if (symbol == arcade.key.W or symbol == arcade.key.UP) and self.physics_engine.can_jump():
-                self.player.change_y = 20 # JUMP
+            self.player.change_y = 20  # JUMP
 
         if symbol == arcade.key.A or symbol == arcade.key.LEFT:
             self.player.change_x = -5
@@ -95,11 +100,12 @@ class Game(arcade.Window):
                 sprite.center_y + sprite.change_y * delta_time
             )
         self.physics_engine.update()
+        self.pan_camera()
 
         if self.player.top > self.height:
             self.player.top = self.height
-        if self.player.right > self.width:
-            self.player.right = self.width
+        if self.player.right > self.width/2:
+            self.player.right = self.width/2
         if self.player.bottom < 0:
             self.player.bottom = 0
         if self.player.left < 0:
@@ -110,4 +116,8 @@ class Game(arcade.Window):
         self.all_sprites.draw()
 
     def pan_camera(self):
-        pass
+        mid = self.width / 2
+        if (self.player.right > mid):
+            for sprite in self.dynamic_sprites:
+                sprite.center_x = int(sprite.center_x - 5)
+                #sprite._set_left(sprite.left - self.player.left)
