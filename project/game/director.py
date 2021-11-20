@@ -73,7 +73,6 @@ class Game(arcade.Window):
 
         if symbol == arcade.key.D or symbol == arcade.key.RIGHT:
             self.player.change_x = 5
-            self.pan_camera()
 
     def on_key_release(self, symbol, modifiers):
         if (
@@ -101,11 +100,12 @@ class Game(arcade.Window):
                 sprite.center_y + sprite.change_y * delta_time
             )
         self.physics_engine.update()
+        self.pan_camera()
 
         if self.player.top > self.height:
             self.player.top = self.height
-        if self.player.right > self.width:
-            self.player.right = self.width
+        if self.player.right > self.width/2:
+            self.player.right = self.width/2
         if self.player.bottom < 0:
             self.player.bottom = 0
         if self.player.left < 0:
@@ -116,8 +116,8 @@ class Game(arcade.Window):
         self.all_sprites.draw()
 
     def pan_camera(self):
-        mid = constants.WIDTH / 2
-        if (self.player._position[0] >= mid):
+        mid = self.width / 2
+        if (self.player.right > mid):
             for sprite in self.dynamic_sprites:
-                sprite._set_left(sprite.left - self.player.left)
-            self.player.right = mid
+                sprite.center_x = int(sprite.center_x - 5)
+                #sprite._set_left(sprite.left - self.player.left)
