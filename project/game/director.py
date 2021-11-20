@@ -1,5 +1,7 @@
 import arcade
 import random
+
+from arcade import physics_engines
 from game import constants
 
 class Game(arcade.Window):
@@ -19,15 +21,23 @@ class Game(arcade.Window):
         self.is_paused = False
 
         self.setup()
+        self.physics_engine = arcade.PhysicsEnginePlatformer(self.player, self.platforms_list, gravity_constant=0.9)
 
     def setup(self):
 
         arcade.set_background_color(arcade.color.SKY_BLUE)
 
         self.player = arcade.Sprite("project\\art\character_ph.png", constants.SCALE)
-        self.player.bottom = 1
+        self.player.bottom = 65
         self.player.left = 10
         self.all_sprites.append(self.player)
+
+        ground = arcade.Sprite("project\\art\ground_ph.png", constants.SCALE)
+        ground.bottom = -32
+        ground.left = 0
+        self.platforms_list.append(ground)
+        self.dynamic_sprites.append(ground)
+        self.all_sprites.append(ground)
 
         for _ in range(5): # platforms still need to spawn outside of the screen
             platform = arcade.Sprite("project\\art\platform_ph.png", constants.SCALE)
@@ -44,14 +54,14 @@ class Game(arcade.Window):
         if symbol == arcade.key.P:
             self.paused = not self.paused
         
-        if symbol == arcade.key.W or symbol == arcade.key.UP:
-            self.player.change_y = 5000 # JUMP
+        if (symbol == arcade.key.W or symbol == arcade.key.UP) and self.physics_engine.can_jump():
+                self.player.change_y = 20 # JUMP
 
         if symbol == arcade.key.A or symbol == arcade.key.LEFT:
-            self.player.change_x = -250
+            self.player.change_x = -5
 
         if symbol == arcade.key.D or symbol == arcade.key.RIGHT:
-            self.player.change_x = 250
+            self.player.change_x = 5
 
     def on_key_release(self, symbol, modifiers):
         if (
@@ -78,7 +88,7 @@ class Game(arcade.Window):
             sprite.center_y = int(
                 sprite.center_y + sprite.change_y * delta_time
             )
-        self.player.change_y = -250 # GRAVITY
+        self.physics_engine.update()
 
         if self.player.top > self.height:
             self.player.top = self.height
