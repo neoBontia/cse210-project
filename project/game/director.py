@@ -3,6 +3,7 @@ import random
 
 from arcade import physics_engines
 from game import constants
+from game.platform import Platform
 
 
 class Game(arcade.Window):
@@ -35,7 +36,7 @@ class Game(arcade.Window):
         self.player.left = 10
         self.all_sprites.append(self.player)
 
-        ground = arcade.Sprite("project\\art\ground_ph.png", constants.SCALE)
+        ground = Platform("project\\art\ground_ph.png", constants.SCALE)
         ground.bottom = -32
         ground.left = 0
         self.platforms_list.append(ground)
@@ -44,14 +45,16 @@ class Game(arcade.Window):
 
         offset = 0
         for _ in range(5):  # platforms still need to spawn outside of the screen
-            platform = arcade.Sprite(
+            platform = Platform(
                 "project\\art\platform_ph.png", constants.SCALE)
             platform.top = random.randint(self.platforms_list[-1]._get_top() - (
                 100 * constants.SCALE), self.platforms_list[-1]._get_top() + (100 * constants.SCALE))
-            platform.left = self.width/2 + offset
+            platform.left = self.platforms_list[-1]._get_right() + 20
             if platform.bottom < 0:
                 platform.top = self.platforms_list[-1]._get_top() + \
                     100 * constants.SCALE
+            if platform.top >= self.height - 70:
+                platform.top = self.height - 70
 
             self.platforms_list.append(platform)
             self.dynamic_sprites.append(platform)
@@ -99,8 +102,12 @@ class Game(arcade.Window):
             sprite.center_y = int(
                 sprite.center_y + sprite.change_y * delta_time
             )
+            
         self.physics_engine.update()
+
         self.pan_camera()
+        for platform in self.platforms_list:
+            platform.respawn(self.platforms_list)
 
         if self.player.top > self.height:
             self.player.top = self.height
@@ -120,4 +127,3 @@ class Game(arcade.Window):
         if (self.player.right > mid):
             for sprite in self.dynamic_sprites:
                 sprite.center_x = int(sprite.center_x - 5)
-                #sprite._set_left(sprite.left - self.player.left)
