@@ -39,13 +39,19 @@ class Game(arcade.Window):
         self.dynamic_sprites.append(ground)
         self.all_sprites.append(ground)
 
+        offset = 0
         for _ in range(5): # platforms still need to spawn outside of the screen
             platform = arcade.Sprite("project\\art\platform_ph.png", constants.SCALE)
-            platform.top = random.randint(32, self.height)
-            platform.left = random.randint(10, self.width - 96)
+            platform.top = random.randint(self.platforms_list[-1]._get_top() - (100 * constants.SCALE), self.platforms_list[-1]._get_top() + (100 * constants.SCALE))
+            platform.left = self.width/2 + offset
+            if platform.bottom < 0 :
+                platform.top = self.platforms_list[-1]._get_top() + 100 * constants.SCALE
+
             self.platforms_list.append(platform)
             self.dynamic_sprites.append(platform)
             self.all_sprites.append(platform)
+            offset += 116 * constants.SCALE
+
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.Q:
@@ -102,9 +108,6 @@ class Game(arcade.Window):
     def on_draw(self):
         arcade.start_render()
         self.all_sprites.draw()
-
-    def handle_collision(self):
-        pass
 
     def pan_camera(self):
         pass
