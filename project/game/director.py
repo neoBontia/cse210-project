@@ -3,7 +3,7 @@ import random
 
 from arcade import physics_engines
 from game import constants
-from game.platform import Platform
+from game.spawner import Spawner
 
 
 class Game(arcade.Window):
@@ -20,11 +20,13 @@ class Game(arcade.Window):
         self.platforms_list = arcade.SpriteList()
         self.dynamic_sprites = arcade.SpriteList()
         self.all_sprites = arcade.SpriteList()
+        self.spawner = Spawner()
         self.is_paused = False
 
         self.setup()
         self.physics_engine = arcade.PhysicsEnginePlatformer(
             self.player, self.platforms_list, gravity_constant=0.9)
+
 
     def setup(self):
 
@@ -36,30 +38,16 @@ class Game(arcade.Window):
         self.player.left = 10
         self.all_sprites.append(self.player)
 
-        ground = Platform("project\\art\ground_ph.png", constants.SCALE)
-        ground.bottom = -32
+        ground = arcade.Sprite("project\\art\platform_ph.png", constants.SCALE)
+        ground.top = 64
         ground.left = 0
         self.platforms_list.append(ground)
         self.dynamic_sprites.append(ground)
         self.all_sprites.append(ground)
 
-        offset = 0
-        for _ in range(5):  # platforms still need to spawn outside of the screen
-            platform = Platform(
-                "project\\art\platform_ph.png", constants.SCALE)
-            platform.top = random.randint(self.platforms_list[-1]._get_top() - (
-                100 * constants.SCALE), self.platforms_list[-1]._get_top() + (100 * constants.SCALE))
-            platform.left = self.platforms_list[-1]._get_right() + 20
-            if platform.bottom < 0:
-                platform.top = self.platforms_list[-1]._get_top() + \
-                    100 * constants.SCALE
-            if platform.top >= self.height - 70:
-                platform.top = self.height - 70
+        for _ in range(9):
+            self.spawner.spawn_platform(self.platforms_list, self.dynamic_sprites, self.all_sprites)
 
-            self.platforms_list.append(platform)
-            self.dynamic_sprites.append(platform)
-            self.all_sprites.append(platform)
-            offset += 116 * constants.SCALE
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.Q:
@@ -76,6 +64,7 @@ class Game(arcade.Window):
 
         if symbol == arcade.key.D or symbol == arcade.key.RIGHT:
             self.player.change_x = 5
+
 
     def on_key_release(self, symbol, modifiers):
         if (
@@ -94,6 +83,7 @@ class Game(arcade.Window):
         ):
             self.player.change_x = 0
 
+
     def on_update(self, delta_time: float):
         for sprite in self.all_sprites:
             sprite.center_x = int(
@@ -107,20 +97,26 @@ class Game(arcade.Window):
 
         self.pan_camera()
         for platform in self.platforms_list:
-            platform.respawn(self.platforms_list)
+            if platform.right < 0:
+                self.platforms_list.remove(platform)
+                self.dynamic_sprites.remove(platform)
+                self.all_sprites.remove(platform)
+                self.spawner.spawn_platform(self.platforms_list, self.dynamic_sprites, self.all_sprites)
 
         if self.player.top > self.height:
             self.player.top = self.height
         if self.player.right > self.width/2:
             self.player.right = self.width/2
         if self.player.bottom < 0:
-            self.player.bottom = 0
+            arcade.close_window()
         if self.player.left < 0:
             self.player.left = 0
+
 
     def on_draw(self):
         arcade.start_render()
         self.all_sprites.draw()
+
 
     def pan_camera(self):
         mid = self.width / 2
