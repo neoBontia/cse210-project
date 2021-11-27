@@ -17,15 +17,25 @@ class Game(arcade.Window):
 
         super().__init__(width, height, title)
 
+        self.list_of_object_list = {
+            "platforms" : arcade.SpriteList(),
+            "dynamics" : arcade.SpriteList(),
+            "coins" : arcade.SpriteList(),
+            "enemies" : arcade.SpriteList(),
+            "all" : arcade.SpriteList()
+        }
+
         self.platforms_list = arcade.SpriteList()
         self.dynamic_sprites = arcade.SpriteList()
         self.all_sprites = arcade.SpriteList()
+        
         self.spawner = Spawner()
-        self.is_paused = False
+        self.score = 0
+        self.paused = False
 
         self.setup()
         self.physics_engine = arcade.PhysicsEnginePlatformer(
-            self.player, self.platforms_list, gravity_constant=0.9)
+            self.player, self.list_of_object_list["platforms"], gravity_constant=0.9)
 
 
     def setup(self):
@@ -36,17 +46,18 @@ class Game(arcade.Window):
             "project\\art\character_ph.png", constants.SCALE)
         self.player.bottom = 65
         self.player.left = 10
-        self.all_sprites.append(self.player)
+        self.list_of_object_list["all"].append(self.player)
 
         ground = arcade.Sprite("project\\art\platform_ph.png", constants.SCALE)
         ground.top = 64
         ground.left = 0
-        self.platforms_list.append(ground)
-        self.dynamic_sprites.append(ground)
-        self.all_sprites.append(ground)
+
+        self.list_of_object_list["platforms"].append(ground)
+        self.list_of_object_list["dynamics"].append(ground)
+        self.list_of_object_list["all"].append(ground)
 
         for _ in range(9):
-            self.spawner.spawn_platform(self.platforms_list, self.dynamic_sprites, self.all_sprites)
+            self.spawner.spawn_platform(self.list_of_object_list)
 
 
     def on_key_press(self, symbol, modifiers):
@@ -83,25 +94,24 @@ class Game(arcade.Window):
         ):
             self.player.change_x = 0
 
-
     def on_update(self, delta_time: float):
-        for sprite in self.all_sprites:
-            sprite.center_x = int(
-                sprite.center_x + sprite.change_x * delta_time
-            )
-            sprite.center_y = int(
-                sprite.center_y + sprite.change_y * delta_time
-            )
-            
-        self.physics_engine.update()
+        if not self.paused:
+            for sprite in self.list_of_object_list["all"]:
+                sprite.center_x = int(
+                    sprite.center_x + sprite.change_x * delta_time
+                )
+                sprite.center_y = int(
+                    sprite.center_y + sprite.change_y * delta_time
+                )
+            self.physics_engine.update()
 
         self.pan_camera()
-        for platform in self.platforms_list:
+        for platform in self.list_of_object_list["platforms"]:
             if platform.right < 0:
-                self.platforms_list.remove(platform)
-                self.dynamic_sprites.remove(platform)
-                self.all_sprites.remove(platform)
-                self.spawner.spawn_platform(self.platforms_list, self.dynamic_sprites, self.all_sprites)
+                self.list_of_object_list["platforms"].remove(platform)
+                self.list_of_object_list["dynamics"].remove(platform)
+                self.list_of_object_list["all"].remove(platform)
+                self.spawner.spawn_platform(self.list_of_object_list)
 
         if self.player.top > self.height:
             self.player.top = self.height
@@ -115,11 +125,14 @@ class Game(arcade.Window):
 
     def on_draw(self):
         arcade.start_render()
-        self.all_sprites.draw()
+        self.list_of_object_list["all"].draw()
+
+        score_text = f"Score: {self.score}"
+        arcade.draw_text(score_text, 10, self.height - 28, arcade.csscolor.BLACK, 18)
 
 
     def pan_camera(self):
         mid = self.width / 2
         if (self.player.right > mid):
-            for sprite in self.dynamic_sprites:
+            for sprite in self.list_of_object_list["dynamics"]:
                 sprite.center_x = int(sprite.center_x - 5)
