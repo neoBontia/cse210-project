@@ -7,16 +7,16 @@ from game.spawner import Spawner
 from game.player import Player
 
 
-class Game(arcade.Window):
+class Game(arcade.View):
     """Infinite side scroller platform jumping game
     Player starts from the left and must continue
     going to the right jumping from one platform to
     the other collecting coins and power-up, and
     evading the enemy."""
 
-    def __init__(self, width, height, title):
+    def __init__(self):
 
-        super().__init__(width, height, title)
+        super().__init__()
 
         self.list_of_object_list = {
             "platforms" : arcade.SpriteList(),
@@ -144,10 +144,10 @@ class Game(arcade.Window):
                 enemy.remove(self.list_of_object_list)
 
         # player movement borders
-        if self.player.top > self.height:
-            self.player.top = self.height
-        if self.player.right > self.width/2:
-            self.player.right = self.width/2
+        if self.player.top > constants.HEIGHT:
+            self.player.top = constants.HEIGHT
+        if self.player.right > constants.WIDTH/2:
+            self.player.right = constants.WIDTH/2
         if self.player.bottom < 0:
             arcade.close_window()
         if self.player.left < 0:
@@ -159,14 +159,15 @@ class Game(arcade.Window):
         self.list_of_object_list["all"].draw()
 
         score_text = f"Score: {self.score}"
-        arcade.draw_text(score_text, 10, self.height - 28, arcade.csscolor.BLACK, 18)
+        arcade.draw_text(score_text, 10, constants.HEIGHT - 28, arcade.csscolor.BLACK, 18)
 
         lives_text = f"Lives: {self.player.get_lives()}"
-        arcade.draw_text(lives_text, 200, self.height - 28, arcade.csscolor.BLACK, 18)
+        arcade.draw_text(lives_text, 200, constants.HEIGHT -
+                         28, arcade.csscolor.BLACK, 18)
 
 
     def pan_camera(self):
-        mid = self.width / 2
+        mid = constants.WIDTH / 2
         if (self.player.right > mid):
             for sprite in self.list_of_object_list["dynamics"]:
                 sprite.center_x = int(sprite.center_x - 5)
