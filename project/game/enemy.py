@@ -9,7 +9,7 @@ class Enemy(arcade.Sprite):
         self.center_x = random.randint(
             platform._get_left(), platform._get_right())
 
-        self.velocity = (0, 0)
+        self.velocity = (250, 0)
         self.reference = platform
 
         self.damage = 1

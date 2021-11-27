@@ -50,6 +50,8 @@ class Game(arcade.Window):
         ground = arcade.Sprite("project\\art\lg_platform_ph.png", constants.SCALE)
         ground.top = 64
         ground.left = 0
+        # Testing enemy logic
+        # self.spawner.spawn_enemy(ground, self.list_of_object_list)
 
         self.list_of_object_list["platforms"].append(ground)
         self.list_of_object_list["dynamics"].append(ground)
@@ -94,9 +96,11 @@ class Game(arcade.Window):
             self.player.change_x = 0
 
     def on_update(self, delta_time: float):
+        # if player is still alive
         if self.player.get_lives() < 1:
             arcade.close_window()
 
+        # sprite updates
         if not self.paused:
             for sprite in self.list_of_object_list["all"]:
                 sprite.center_x = int(
@@ -105,19 +109,24 @@ class Game(arcade.Window):
                 sprite.center_y = int(
                     sprite.center_y + sprite.change_y * delta_time
                 )
+            # physics updates
             self.physics_engine.update()
 
+        # coin collision
         collided_coin = self.player.collides_with_list(self.list_of_object_list["coins"])
         if len(collided_coin) > 0:
             self.score += collided_coin[0].get_score()
             collided_coin[0].obtained(self.list_of_object_list)
 
+        # enemy collision
         collided_enemy = self.player.collides_with_list(self.list_of_object_list["enemies"])
         if len(collided_enemy) > 0:
             self.player.lives -= collided_enemy[0].get_damage()
             collided_enemy[0].remove(self.list_of_object_list)
 
+        # camera panning
         self.pan_camera()
+        # platform respawn
         for platform in self.list_of_object_list["platforms"]:
             if platform.right < 0:
                 self.list_of_object_list["platforms"].remove(platform)
@@ -125,6 +134,16 @@ class Game(arcade.Window):
                 self.list_of_object_list["all"].remove(platform)
                 self.spawner.spawn_platform(self.score, self.list_of_object_list)
 
+        # enemy movement
+        for enemy in self.list_of_object_list["enemies"]:
+            if enemy._get_left() < enemy.reference._get_left():
+                enemy.velocity = (250, 0)
+            if enemy._get_right() > enemy.reference._get_right():
+                enemy.velocity = (-200, 0)
+            if enemy._get_right() < 0:
+                enemy.remove(self.list_of_object_list)
+
+        # player movement borders
         if self.player.top > self.height:
             self.player.top = self.height
         if self.player.right > self.width/2:
@@ -134,7 +153,7 @@ class Game(arcade.Window):
         if self.player.left < 0:
             self.player.left = 0
 
-
+    
     def on_draw(self):
         arcade.start_render()
         self.list_of_object_list["all"].draw()
