@@ -4,6 +4,7 @@ import random
 from arcade import physics_engines
 from game import constants
 from game.spawner import Spawner
+from game.player import Player
 
 
 class Game(arcade.Window):
@@ -42,10 +43,8 @@ class Game(arcade.Window):
 
         arcade.set_background_color(arcade.color.SKY_BLUE)
 
-        self.player = arcade.Sprite(
+        self.player = Player(
             "project\\art\character_ph.png", constants.SCALE)
-        self.player.bottom = 65
-        self.player.left = 10
         self.list_of_object_list["all"].append(self.player)
 
         ground = arcade.Sprite("project\\art\platform_ph.png", constants.SCALE)
@@ -105,6 +104,11 @@ class Game(arcade.Window):
                 )
             self.physics_engine.update()
 
+        collided_coin = self.player.collides_with_list(self.list_of_object_list["coins"])
+        if len(collided_coin) > 0:
+            self.score += collided_coin[0].get_score()
+            collided_coin[0].obtained(self.list_of_object_list)
+
         self.pan_camera()
         for platform in self.list_of_object_list["platforms"]:
             if platform.right < 0:
@@ -129,6 +133,9 @@ class Game(arcade.Window):
 
         score_text = f"Score: {self.score}"
         arcade.draw_text(score_text, 10, self.height - 28, arcade.csscolor.BLACK, 18)
+
+        lives_text = f"Lives: {self.player.get_lives()}"
+        arcade.draw_text(lives_text, 200, self.height - 28, arcade.csscolor.BLACK, 18)
 
 
     def pan_camera(self):
