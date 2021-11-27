@@ -47,7 +47,7 @@ class Game(arcade.Window):
             "project\\art\character_ph.png", constants.SCALE)
         self.list_of_object_list["all"].append(self.player)
 
-        ground = arcade.Sprite("project\\art\platform_ph.png", constants.SCALE)
+        ground = arcade.Sprite("project\\art\lg_platform_ph.png", constants.SCALE)
         ground.top = 64
         ground.left = 0
 
@@ -55,8 +55,8 @@ class Game(arcade.Window):
         self.list_of_object_list["dynamics"].append(ground)
         self.list_of_object_list["all"].append(ground)
 
-        for _ in range(9):
-            self.spawner.spawn_platform(self.list_of_object_list)
+        for _ in range(6):
+            self.spawner.spawn_platform(self.score, self.list_of_object_list)
 
 
     def on_key_press(self, symbol, modifiers):
@@ -94,6 +94,9 @@ class Game(arcade.Window):
             self.player.change_x = 0
 
     def on_update(self, delta_time: float):
+        if self.player.get_lives() < 1:
+            arcade.close_window()
+
         if not self.paused:
             for sprite in self.list_of_object_list["all"]:
                 sprite.center_x = int(
@@ -109,13 +112,18 @@ class Game(arcade.Window):
             self.score += collided_coin[0].get_score()
             collided_coin[0].obtained(self.list_of_object_list)
 
+        collided_enemy = self.player.collides_with_list(self.list_of_object_list["enemies"])
+        if len(collided_enemy) > 0:
+            self.player.lives -= collided_enemy[0].get_damage()
+            collided_enemy[0].remove(self.list_of_object_list)
+
         self.pan_camera()
         for platform in self.list_of_object_list["platforms"]:
             if platform.right < 0:
                 self.list_of_object_list["platforms"].remove(platform)
                 self.list_of_object_list["dynamics"].remove(platform)
                 self.list_of_object_list["all"].remove(platform)
-                self.spawner.spawn_platform(self.list_of_object_list)
+                self.spawner.spawn_platform(self.score, self.list_of_object_list)
 
         if self.player.top > self.height:
             self.player.top = self.height
