@@ -5,7 +5,6 @@ from arcade import physics_engines
 from game import constants
 from game.spawner import Spawner
 from game.player import Player
-# from game.gameover import GameOverView
 
 
 class Game(arcade.View):
@@ -196,31 +195,46 @@ class GameOverView(arcade.View):
         self.curr_score = score
         self.score_list = []
         self.fetch_highscores()
-        self.update_highscores()
-        self.fetch_highscores()
+        self.can_update = True
+
+        self.inputs = ["A", "A", "A"]
 
     def on_draw(self):
         """ Draw this view """
         arcade.start_render()
         arcade.draw_text("Game Over", self.window.width / 4, self.window.height / 2+50,
                          arcade.color.WHITE, font_size=50, anchor_x="center")
-        arcade.draw_text("Click to play again.", self.window.width / 4, self.window.height / 2-50,
+        arcade.draw_text(f"Your score is {str(self.curr_score)}!", self.window.width / 4, self.window.height / 2 + 15,
                          arcade.color.WHITE, font_size=20, anchor_x="center")
-        arcade.draw_text("Press Q to Quit.", self.window.width / 4, self.window.height / 2-75,
+
+        arcade.draw_text("Initials: ", 425, self.window.height / 2 - 20,
                          arcade.color.WHITE, font_size=20, anchor_x="center")
-        arcade.draw_text("Your score is " + str(self.curr_score), self.window.width / 4, self.window.height / 2 + 15,
+
+        count = 1
+        for char in self.inputs:
+            arcade.draw_text(char, 455 + (count * 22), self.window.height / 2 - 20,
+                        arcade.color.WHITE, font_size=20, anchor_x="center")
+            count += 1
+
+        arcade.draw_text("Press ENTER to save your highscore.", self.window.width / 4, self.window.height / 2-50,
+                         arcade.color.WHITE, font_size=20, anchor_x="center")
+        arcade.draw_text("Click to play again.", self.window.width / 4, self.window.height / 2-75,
+                         arcade.color.WHITE, font_size=20, anchor_x="center")
+        arcade.draw_text("Press ESC to Quit.", self.window.width / 4, self.window.height / 2-100,
                          arcade.color.WHITE, font_size=20, anchor_x="center")
         
-        highscore_label = "HIGHSCORES\n"
-        arcade.draw_text(highscore_label, self.window.width * 0.75, self.window.height - 105,
+
+
+        arcade.draw_text("HIGHSCORES", self.window.width * 0.75, self.window.height - 105,
                          arcade.color.WHITE, font_size=20, anchor_x="center")
 
         count = 1
         for line in self.score_list:
-            arcade.draw_text(line, self.window.width * 0.75, self.window.height - 115 - (count * 40),
+            arcade.draw_text(f"{line}", self.window.width * 0.75, self.window.height - 115 - (count * 40),
                            arcade.color.WHITE, font_size=20, anchor_x="center")
             count += 1
 
+        
         
         # self.texture.draw_sized(constants.WIDTH / 2, constants.HEIGHT / 2,
         #                        constants.WIDTH, constants.HEIGHT)
@@ -233,8 +247,92 @@ class GameOverView(arcade.View):
         self.window.show_view(game_view)
 
     def on_key_press(self, symbol, modifiers):
-        if symbol == arcade.key.Q:
+        if symbol == arcade.key.ESCAPE:
             arcade.close_window()
+        if symbol == arcade.key.ENTER:
+            if self.can_update:
+                self.update_highscores()
+                self.fetch_highscores()
+                self.can_update = False
+
+        if symbol == arcade.key.A:
+            self.inputs.append("A")
+            self.inputs.pop(0)
+        if symbol == arcade.key.B:
+            self.inputs.append("B")
+            self.inputs.pop(0)
+        if symbol == arcade.key.C:
+            self.inputs.append("C")
+            self.inputs.pop(0)
+        if symbol == arcade.key.D:
+            self.inputs.append("D")
+            self.inputs.pop(0)
+        if symbol == arcade.key.E:
+            self.inputs.append("E")
+            self.inputs.pop(0)
+        if symbol == arcade.key.F:
+            self.inputs.append("F")
+            self.inputs.pop(0)
+        if symbol == arcade.key.G:
+            self.inputs.append("G")
+            self.inputs.pop(0)
+        if symbol == arcade.key.H:
+            self.inputs.append("H")
+            self.inputs.pop(0)
+        if symbol == arcade.key.I:
+            self.inputs.append("I")
+            self.inputs.pop(0)
+        if symbol == arcade.key.J:
+            self.inputs.append("J")
+            self.inputs.pop(0)
+        if symbol == arcade.key.K:
+            self.inputs.append("K")
+            self.inputs.pop(0)
+        if symbol == arcade.key.L:
+            self.inputs.append("L")
+            self.inputs.pop(0)
+        if symbol == arcade.key.M:
+            self.inputs.append("M")
+            self.inputs.pop(0)
+        if symbol == arcade.key.N:
+            self.inputs.append("N")
+            self.inputs.pop(0)
+        if symbol == arcade.key.O:
+            self.inputs.append("O")
+            self.inputs.pop(0)
+        if symbol == arcade.key.P:
+            self.inputs.append("P")
+            self.inputs.pop(0)
+        if symbol == arcade.key.Q:
+            self.inputs.append("Q")
+            self.inputs.pop(0)
+        if symbol == arcade.key.R:
+            self.inputs.append("R")
+            self.inputs.pop(0)
+        if symbol == arcade.key.S:
+            self.inputs.append("S")
+            self.inputs.pop(0)
+        if symbol == arcade.key.T:
+            self.inputs.append("T")
+            self.inputs.pop(0)
+        if symbol == arcade.key.U:
+            self.inputs.append("U")
+            self.inputs.pop(0)
+        if symbol == arcade.key.V:
+            self.inputs.append("V")
+            self.inputs.pop(0)
+        if symbol == arcade.key.W:
+            self.inputs.append("W")
+            self.inputs.pop(0)
+        if symbol == arcade.key.X:
+            self.inputs.append("X")
+            self.inputs.pop(0)
+        if symbol == arcade.key.Y:
+            self.inputs.append("Y")
+            self.inputs.pop(0)
+        if symbol == arcade.key.Z:
+            self.inputs.append("Z")
+            self.inputs.pop(0)
 
     def fetch_highscores(self):
         f = open("project\game\highscores.txt", "r")
@@ -244,12 +342,15 @@ class GameOverView(arcade.View):
 
     def update_highscores(self):
         for i in range(len(self.score_list) - 1):
-            if self.curr_score > int(self.score_list[i]):
-                self.score_list.insert(i, str(self.curr_score) + "\n")
+            split_line = self.score_list[i].split()
+            if self.curr_score > int(split_line[0]):
+                initials = ""
+                for char in self.inputs:
+                    initials += char
+                self.score_list.insert(i, f"{str(self.curr_score)} - {initials}\n")
+                self.score_list.pop(-1)
                 break
-        self.score_list.pop(-1)
-        self.score_list[-1] = " "
-
+        
         f = open("project\game\highscores.txt", "w")
         f.writelines(self.score_list)
         f.close()
