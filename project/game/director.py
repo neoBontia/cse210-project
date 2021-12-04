@@ -97,7 +97,7 @@ class Game(arcade.View):
     def on_update(self, delta_time: float):
         # if player is still alive
         if self.player.get_lives() < 1:
-            view = GameOverView()
+            view = GameOverView(self.score)
             self.window.show_view(view)
 
         # sprite updates
@@ -152,7 +152,7 @@ class Game(arcade.View):
         if self.player.right > constants.WIDTH/2:
             self.player.right = constants.WIDTH/2
         if self.player.bottom < 0:
-            view = GameOverView()
+            view = GameOverView(self.score)
             self.window.show_view(view)
         if self.player.left < 0:
             self.player.left = 0
@@ -176,12 +176,15 @@ class Game(arcade.View):
                 sprite.center_x = int(sprite.center_x - 5)
 
 
+
+
+
 # GameOver Class
 
 class GameOverView(arcade.View):
     """ View to show when game is over """
 
-    def __init__(self):
+    def __init__(self, score):
         """ This is run once when we switch to this view """
         super().__init__()
         # self.texture = arcade.load_texture("game_over.png")
@@ -190,18 +193,39 @@ class GameOverView(arcade.View):
         # to reset the viewport back to the start so we can see what we draw.
         arcade.set_viewport(0, constants.WIDTH - 1,
                             0, constants.HEIGHT - 1)
+        self.curr_score = score
+        self.score_list = []
+        self.fetch_highscores()
+        self.update_highscores()
+        self.fetch_highscores()
 
     def on_draw(self):
         """ Draw this view """
         arcade.start_render()
-        arcade.draw_text("Game Over", self.window.width / 2, self.window.height / 2+50,
+        arcade.draw_text("Game Over", self.window.width / 4, self.window.height / 2+50,
                          arcade.color.WHITE, font_size=50, anchor_x="center")
-        arcade.draw_text("Click to play again.", self.window.width / 2, self.window.height / 2-50,
+        arcade.draw_text("Click to play again.", self.window.width / 4, self.window.height / 2-50,
                          arcade.color.WHITE, font_size=20, anchor_x="center")
-        arcade.draw_text("Press Q to Quit.", self.window.width / 2, self.window.height / 2-75,
+        arcade.draw_text("Press Q to Quit.", self.window.width / 4, self.window.height / 2-75,
                          arcade.color.WHITE, font_size=20, anchor_x="center")
+        arcade.draw_text("Your score is " + str(self.curr_score), self.window.width / 4, self.window.height / 2 + 15,
+                         arcade.color.WHITE, font_size=20, anchor_x="center")
+        
+        highscore_label = "HIGHSCORES\n"
+        arcade.draw_text(highscore_label, self.window.width * 0.75, self.window.height - 105,
+                         arcade.color.WHITE, font_size=20, anchor_x="center")
+
+        count = 1
+        for line in self.score_list:
+            arcade.draw_text(line, self.window.width * 0.75, self.window.height - 115 - (count * 40),
+                           arcade.color.WHITE, font_size=20, anchor_x="center")
+            count += 1
+
+        
         # self.texture.draw_sized(constants.WIDTH / 2, constants.HEIGHT / 2,
         #                        constants.WIDTH, constants.HEIGHT)
+
+
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, re-start the game. """
@@ -211,3 +235,21 @@ class GameOverView(arcade.View):
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.Q:
             arcade.close_window()
+
+    def fetch_highscores(self):
+        f = open("project\game\highscores.txt", "r")
+
+        self.score_list = f.readlines()
+        f.close()
+
+    def update_highscores(self):
+        for i in range(len(self.score_list) - 1):
+            if self.curr_score > int(self.score_list[i]):
+                self.score_list.insert(i, str(self.curr_score) + "\n")
+                break
+        self.score_list.pop(-1)
+        self.score_list[-1] = " "
+
+        f = open("project\game\highscores.txt", "w")
+        f.writelines(self.score_list)
+        f.close()
