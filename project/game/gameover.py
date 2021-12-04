@@ -1,8 +1,7 @@
 import arcade
 from game.director import Game
 
-
-class InstructionView(arcade.View):
+class GameOverView(arcade.View):
     def on_show(self):
         """ This is run once when we switch to this view """
         # arcade.set_background_color(arcade.csscolor.DARK_SLATE_BLUE)
@@ -14,23 +13,15 @@ class InstructionView(arcade.View):
     def on_draw(self):
         """ Draw this view """
         arcade.start_render()
-        arcade.draw_text("Ready To Jump?", self.window.width / 2, self.window.height / 2+50,
-                         arcade.color.WHITE, font_size=50, anchor_x="center")
+        arcade.draw_text("Game Over", self.window.width / 2, self.window.height / 2+50,
+                         arcade.color.RED, font_size=50, anchor_x="center")
         arcade.draw_text("Press Q to Quit", self.window.width / 2, self.window.height / 2+15,
                          arcade.color.WHITE, font_size=15, anchor_x="center")
-        arcade.draw_text("Press P to Pause", self.window.width / 2, self.window.height / 2-15,
-                         arcade.color.WHITE, font_size=15, anchor_x="center")
-        arcade.draw_text("Click here to PLAY", self.window.width / 2, self.window.height / 2-75,
+        arcade.draw_text("Click here to PLAY AGAIN", self.window.width / 2, self.window.height / 2-75,
                          arcade.color.WHITE, font_size=20, anchor_x="center")
-        arcade.draw_text("How to play:", self.window.width / 2, self.window.height / 2-40,
-                         arcade.color.WHITE, font_size=20, anchor_x="center")
-        arcade.draw_text("A = left; B = Right;  W = Jump", self.window.width / 2, self.window.height / 2-75,
-                         arcade.color.WHITE, font_size=10, anchor_x="center")
         
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """
         game_view = Game()
         self.window.show_view(game_view)
-
-    
