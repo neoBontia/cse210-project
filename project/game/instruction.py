@@ -14,19 +14,22 @@ class InstructionView(arcade.View):
     def on_draw(self):
         """ Draw this view """
         arcade.start_render()
-        arcade.draw_text("Ready To Jump?", self.window.width / 2, self.window.height / 2+50,
+        arcade.draw_text("Ready To Jump?", self.window.width / 2, self.window.height / 2+75,
                          arcade.color.WHITE, font_size=50, anchor_x="center")
-        arcade.draw_text("Press Q to Quit", self.window.width / 2, self.window.height / 2+15,
-                         arcade.color.WHITE, font_size=15, anchor_x="center")
-        arcade.draw_text("Press P to Pause", self.window.width / 2, self.window.height / 2-15,
-                         arcade.color.WHITE, font_size=15, anchor_x="center")
-        arcade.draw_text("Click here to PLAY", self.window.width / 2, self.window.height / 2-75,
+        arcade.draw_text("Click here to PLAY", self.window.width / 2, self.window.height / 2+25,
                          arcade.color.WHITE, font_size=20, anchor_x="center")
-        arcade.draw_text("How to play:", self.window.width / 2, self.window.height / 2-40,
+        arcade.draw_text("How to play:", self.window.width / 2, self.window.height / 2-25,
                          arcade.color.WHITE, font_size=20, anchor_x="center")
-        arcade.draw_text("A = left; B = Right;  W = Jump", self.window.width / 2, self.window.height / 2-75,
-                         arcade.color.WHITE, font_size=10, anchor_x="center")
-        
+        arcade.draw_text("A = Left; D = Right;  W = Jump", self.window.width / 2, self.window.height / 2-50,
+                         arcade.color.WHITE, font_size=20, anchor_x="center")
+        arcade.draw_text("Collect coins to get 1 point, avoid enemies to stay alive.", self.window.width / 2, self.window.height / 2-75,
+                         arcade.color.WHITE, font_size=20, anchor_x="center")
+        arcade.draw_text("Jumping on their head however, gives you 5 points.", self.window.width / 2, self.window.height / 2-100,
+                         arcade.color.WHITE, font_size=20, anchor_x="center")
+        arcade.draw_text("Press Q to Quit", self.window.width / 2, self.window.height / 2-125,
+                         arcade.color.WHITE, font_size=15, anchor_x="center")
+        arcade.draw_text("Press P to Pause", self.window.width / 2, self.window.height / 2-150,
+                         arcade.color.WHITE, font_size=15, anchor_x="center")
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ If the user presses the mouse button, start the game. """

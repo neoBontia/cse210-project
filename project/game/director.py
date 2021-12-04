@@ -51,7 +51,7 @@ class Game(arcade.View):
         ground.top = 64
         ground.left = 0
         # Testing enemy logic
-        # self.spawner.spawn_enemy(ground, self.list_of_object_list)
+        #self.spawner.spawn_enemy(ground, self.list_of_object_list)
 
         self.list_of_object_list["platforms"].append(ground)
         self.list_of_object_list["dynamics"].append(ground)
@@ -122,6 +122,9 @@ class Game(arcade.View):
         collided_enemy = self.player.collides_with_list(
             self.list_of_object_list["enemies"])
         if len(collided_enemy) > 0:
+            if self.player._get_bottom() + 15 >= collided_enemy[0]._get_top():
+                self.score += 5
+                self.player.lives += 1
             self.player.lives -= collided_enemy[0].get_damage()
             collided_enemy[0].remove(self.list_of_object_list)
 
@@ -218,9 +221,9 @@ class GameOverView(arcade.View):
 
         arcade.draw_text("Press ENTER to save your highscore.", self.window.width / 4, self.window.height / 2-50,
                          arcade.color.WHITE, font_size=20, anchor_x="center")
-        arcade.draw_text("Click to play again.", self.window.width / 4, self.window.height / 2-75,
+        arcade.draw_text("Press SPACE to play again.", self.window.width / 4, self.window.height / 2-95,
                          arcade.color.WHITE, font_size=20, anchor_x="center")
-        arcade.draw_text("Press ESC to Quit.", self.window.width / 4, self.window.height / 2-100,
+        arcade.draw_text("Press ESC to Quit.", self.window.width / 4, self.window.height / 2-120,
                          arcade.color.WHITE, font_size=20, anchor_x="center")
         
 
@@ -240,12 +243,6 @@ class GameOverView(arcade.View):
         #                        constants.WIDTH, constants.HEIGHT)
 
 
-
-    def on_mouse_press(self, _x, _y, _button, _modifiers):
-        """ If the user presses the mouse button, re-start the game. """
-        game_view = Game()
-        self.window.show_view(game_view)
-
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.ESCAPE:
             arcade.close_window()
@@ -254,6 +251,9 @@ class GameOverView(arcade.View):
                 self.update_highscores()
                 self.fetch_highscores()
                 self.can_update = False
+        if symbol == arcade.key.SPACE:
+            game_view = Game()
+            self.window.show_view(game_view)
 
         if symbol == arcade.key.A:
             self.inputs.append("A")
