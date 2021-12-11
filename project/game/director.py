@@ -81,22 +81,23 @@ class Game(arcade.View):
         if symbol == arcade.key.P:
             arcade.play_sound(self.button)
             self.paused = not self.paused
+        
+        if not self.paused:
+            if (symbol == arcade.key.W or symbol == arcade.key.UP) and self.physics_engine.can_jump():
+                self.player.change_y = 20  # JUMP
+                arcade.play_sound(self.jump_sound)
 
-        if (symbol == arcade.key.W or symbol == arcade.key.UP) and self.physics_engine.can_jump():
-            self.player.change_y = 20  # JUMP
-            arcade.play_sound(self.jump_sound)
+            if symbol == arcade.key.A or symbol == arcade.key.LEFT:
+                self.player.change_x = -5
 
-        if symbol == arcade.key.A or symbol == arcade.key.LEFT:
-            self.player.change_x = -5
+            if symbol == arcade.key.D or symbol == arcade.key.RIGHT:
+                self.player.change_x = 5
 
-        if symbol == arcade.key.D or symbol == arcade.key.RIGHT:
-            self.player.change_x = 5
-
-        if symbol == arcade.key.SPACE:
-            if self.player.can_shoot():
-                arcade.play_sound(self.shoot_projectile)
-                self.spawner.spawn_projectile(self.player, self.list_of_object_list)
-                self.player.projectiles -= 1
+            if symbol == arcade.key.SPACE:
+                if self.player.can_shoot():
+                    arcade.play_sound(self.shoot_projectile)
+                    self.spawner.spawn_projectile(self.player, self.list_of_object_list)
+                    self.player.projectiles -= 1
 
     def on_key_release(self, symbol, modifiers):
         if (
@@ -213,7 +214,7 @@ class Game(arcade.View):
         arcade.draw_text(lives_text, 200, constants.HEIGHT -
                          28, arcade.csscolor.BLACK, 18)
 
-        projectile_text = f"Projectiles: {self.player.projectiles}"
+        projectile_text = f"Charge: {self.player.projectiles}"
         arcade.draw_text(projectile_text, 390, constants.HEIGHT -
                          28, arcade.csscolor.BLACK, 18)
 
@@ -271,7 +272,7 @@ class GameOverView(arcade.View):
                          arcade.color.WHITE, font_size=20, anchor_x="center")
         arcade.draw_text("Press SPACE to play again.", self.window.width / 4, self.window.height / 2-95,
                          arcade.color.WHITE, font_size=20, anchor_x="center")
-        arcade.draw_text("Press ESC to Quit.", self.window.width / 4, self.window.height / 2-120,
+        arcade.draw_text("Press ESC to Quit.", self.window.width / 4, self.window.height / 2-130,
                          arcade.color.WHITE, font_size=20, anchor_x="center")
         
 

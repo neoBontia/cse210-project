@@ -8,7 +8,7 @@ from game.refill import Refill
 from pathlib import Path
 
 platform_sprites = [
-    Path("project/rt/sm_platform_ph.png"),
+    Path("project/art/sm_platform_ph.png"),
     Path("project/art/md_platform_ph.png"),
     Path("project/art/lg_platform_ph.png")
 ]
