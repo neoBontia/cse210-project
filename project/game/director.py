@@ -47,11 +47,11 @@ class Game(arcade.View):
         arcade.set_background_color(arcade.color.SKY_BLUE)
 
         self.player = Player(
-            Path("project\\art\character_ph.png"), constants.SCALE)
+            Path("project/art/character_ph.png"), constants.SCALE)
         self.list_of_object_list["all"].append(self.player)
 
         ground = arcade.Sprite(
-            Path("project\\art\lg_platform_ph.png"), constants.SCALE)
+            Path("project/art/lg_platform_ph.png"), constants.SCALE)
         ground.top = 64
         ground.left = 0
         # Testing enemy logic
@@ -64,14 +64,14 @@ class Game(arcade.View):
         for _ in range(6):
             self.spawner.spawn_platform(self.score, self.list_of_object_list)
 
-        self.jump_sound = arcade.load_sound(Path("project\sounds\jump.wav"))
-        self.coin_collision_sound = arcade.load_sound(Path("project\sounds\coins.mp3"))
-        self.game_over_sound = arcade.load_sound(Path("project\sounds\game_over.wav"))
-        self.shoot_projectile = arcade.load_sound(Path("project\sounds\shooting.mp3"))
-        self.button = arcade.load_sound(Path("project\sounds\\buttons.wav"))
-        self.player_enemy_collision = arcade.load_sound(Path("project\sounds\player_enemy.wav"))
-        self.projectile_enemy_collision = arcade.load_sound(Path("project\sounds\projectile_enemy.wav"))
-        self.refill_collision = arcade.load_sound(Path("project\sounds\\refill_collision.wav"))
+        self.jump_sound = arcade.load_sound(Path("project/sounds/jump.wav"))
+        self.coin_collision_sound = arcade.load_sound(Path("project/sounds/coins.mp3"))
+        self.game_over_sound = arcade.load_sound(Path("project/sounds/game_over.wav"))
+        self.shoot_projectile = arcade.load_sound(Path("project/sounds/shooting.mp3"))
+        self.button = arcade.load_sound(Path("project/sounds/buttons.wav"))
+        self.player_enemy_collision = arcade.load_sound(Path("project/sounds/player_enemy.wav"))
+        self.projectile_enemy_collision = arcade.load_sound(Path("project/sounds/projectile_enemy.wav"))
+        self.refill_collision = arcade.load_sound(Path("project/sounds/refill_collision.wav"))
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.Q:
@@ -245,8 +245,8 @@ class GameOverView(arcade.View):
         self.score_list = []
         self.fetch_highscores()
         self.can_update = True
-        self.initials_input = arcade.load_sound(Path("project\sounds\highscore_input.mp3"))
-        self.button = arcade.load_sound(Path("project\sounds\\buttons.wav"))
+        self.initials_input = arcade.load_sound(Path("project/sounds/highscore_input.mp3"))
+        self.button = arcade.load_sound(Path("project/sounds/buttons.wav"))
 
         self.inputs = ["A", "A", "A"]
 
@@ -412,7 +412,7 @@ class GameOverView(arcade.View):
             self.inputs.pop(0)
 
     def fetch_highscores(self):
-        f = open(Path("project\game\highscores.txt"), "r")
+        f = open(Path("project/game/highscores.txt"), "r")
 
         self.score_list = f.readlines()
         f.close()
@@ -428,6 +428,6 @@ class GameOverView(arcade.View):
                 self.score_list.pop(-1)
                 break
         
-        f = open(Path("project\game\highscores.txt"), "w")
+        f = open(Path("project/game/highscores.txt"), "w")
         f.writelines(self.score_list)
         f.close()
