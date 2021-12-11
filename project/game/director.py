@@ -68,12 +68,18 @@ class Game(arcade.View):
         self.coin_collision_sound = arcade.load_sound(Path("project\sounds\coins.mp3"))
         self.game_over_sound = arcade.load_sound(Path("project\sounds\game_over.wav"))
         self.shoot_projectile = arcade.load_sound(Path("project\sounds\shooting.mp3"))
+        self.button = arcade.load_sound(Path("project\sounds\\buttons.wav"))
+        self.player_enemy_collision = arcade.load_sound(Path("project\sounds\player_enemy.wav"))
+        self.projectile_enemy_collision = arcade.load_sound(Path("project\sounds\projectile_enemy.wav"))
+        self.refill_collision = arcade.load_sound(Path("project\sounds\\refill_collision.wav"))
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.Q:
+            arcade.play_sound(self.button)
             arcade.close_window()
 
         if symbol == arcade.key.P:
+            arcade.play_sound(self.button)
             self.paused = not self.paused
 
         if (symbol == arcade.key.W or symbol == arcade.key.UP) and self.physics_engine.can_jump():
@@ -135,6 +141,7 @@ class Game(arcade.View):
 
             killed_enemy = projectile.collides_with_list(self.list_of_object_list["enemies"])
             if len(killed_enemy) > 0:
+                arcade.play_sound(self.projectile_enemy_collision)
                 self.score += 5
                 killed_enemy[0].remove(self.list_of_object_list)
                 projectile.remove(self.list_of_object_list)
@@ -150,6 +157,7 @@ class Game(arcade.View):
         # refill collision
         obtained_refill = self.player.collides_with_list(self.list_of_object_list["refill"])
         if len(obtained_refill) > 0:
+            arcade.play_sound(self.refill_collision)
             self.player.projectiles += obtained_refill[0].get_value()
             obtained_refill[0].obtained(self.list_of_object_list)
 
@@ -157,6 +165,7 @@ class Game(arcade.View):
         collided_enemy = self.player.collides_with_list(
             self.list_of_object_list["enemies"])
         if len(collided_enemy) > 0:
+            arcade.play_sound(self.player_enemy_collision)
             self.player.lives -= collided_enemy[0].get_damage()
             collided_enemy[0].remove(self.list_of_object_list)
 
@@ -236,6 +245,8 @@ class GameOverView(arcade.View):
         self.score_list = []
         self.fetch_highscores()
         self.can_update = True
+        self.initials_input = arcade.load_sound(Path("project\sounds\highscore_input.mp3"))
+        self.button = arcade.load_sound(Path("project\sounds\\buttons.wav"))
 
         self.inputs = ["A", "A", "A"]
 
@@ -282,92 +293,121 @@ class GameOverView(arcade.View):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.ESCAPE:
+            arcade.play_sound(self.button)
             arcade.close_window()
         if symbol == arcade.key.ENTER:
             if self.can_update:
+                arcade.play_sound(self.button)
                 self.update_highscores()
                 self.fetch_highscores()
                 self.can_update = False
         if symbol == arcade.key.SPACE:
+            arcade.play_sound(self.button)
             game_view = Game()
             self.window.show_view(game_view)
 
         if symbol == arcade.key.A:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("A")
             self.inputs.pop(0)
         if symbol == arcade.key.B:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("B")
             self.inputs.pop(0)
         if symbol == arcade.key.C:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("C")
             self.inputs.pop(0)
         if symbol == arcade.key.D:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("D")
             self.inputs.pop(0)
         if symbol == arcade.key.E:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("E")
             self.inputs.pop(0)
         if symbol == arcade.key.F:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("F")
             self.inputs.pop(0)
         if symbol == arcade.key.G:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("G")
             self.inputs.pop(0)
         if symbol == arcade.key.H:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("H")
             self.inputs.pop(0)
         if symbol == arcade.key.I:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("I")
             self.inputs.pop(0)
         if symbol == arcade.key.J:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("J")
             self.inputs.pop(0)
         if symbol == arcade.key.K:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("K")
             self.inputs.pop(0)
         if symbol == arcade.key.L:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("L")
             self.inputs.pop(0)
         if symbol == arcade.key.M:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("M")
             self.inputs.pop(0)
         if symbol == arcade.key.N:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("N")
             self.inputs.pop(0)
         if symbol == arcade.key.O:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("O")
             self.inputs.pop(0)
         if symbol == arcade.key.P:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("P")
             self.inputs.pop(0)
         if symbol == arcade.key.Q:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("Q")
             self.inputs.pop(0)
         if symbol == arcade.key.R:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("R")
             self.inputs.pop(0)
         if symbol == arcade.key.S:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("S")
             self.inputs.pop(0)
         if symbol == arcade.key.T:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("T")
             self.inputs.pop(0)
         if symbol == arcade.key.U:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("U")
             self.inputs.pop(0)
         if symbol == arcade.key.V:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("V")
             self.inputs.pop(0)
         if symbol == arcade.key.W:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("W")
             self.inputs.pop(0)
         if symbol == arcade.key.X:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("X")
             self.inputs.pop(0)
         if symbol == arcade.key.Y:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("Y")
             self.inputs.pop(0)
         if symbol == arcade.key.Z:
+            arcade.play_sound(self.initials_input)
             self.inputs.append("Z")
             self.inputs.pop(0)
 

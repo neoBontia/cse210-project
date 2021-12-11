@@ -11,10 +11,11 @@ class InstructionView(arcade.View):
         # Reset the viewport, necessary if we have a scrolling game and we need
         # to reset the viewport back to the start so we can see what we draw.
         arcade.set_viewport(0, self.window.width, 0, self.window.height)
-        self.bgm = arcade.load_sound(Path("project\sounds\\background.wav"))
+        self.bgm = arcade.load_sound(Path("project\sounds\\bgm.mp3"))
+        self.button = arcade.load_sound(Path("project\sounds\\buttons.wav"))
 
         arcade.play_sound(self.bgm)
-        arcade.schedule(self.play_bgm, 25.0)
+        arcade.schedule(self.play_bgm, 48.0)
 
     def play_bgm(self, delta_time: float):
         arcade.play_sound(self.bgm)
