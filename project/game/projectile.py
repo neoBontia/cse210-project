@@ -8,7 +8,7 @@ class Projectile(arcade.Sprite):
         self.center_y = player._get_center_y()
         self.center_x = player._get_center_x() + 32
 
-        self.velocity = (1000, 0)
+        self.velocity = (1200, 0)
 
         object_list["projectiles"].append(self)
         object_list["dynamics"].append(self)

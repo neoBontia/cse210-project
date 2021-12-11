@@ -24,6 +24,7 @@ class Game(arcade.View):
             "platforms": arcade.SpriteList(),
             "dynamics": arcade.SpriteList(),
             "coins": arcade.SpriteList(),
+            "refill": arcade.SpriteList(),
             "enemies": arcade.SpriteList(),
             "projectiles": arcade.SpriteList(),
             "all": arcade.SpriteList()
@@ -66,6 +67,7 @@ class Game(arcade.View):
         self.jump_sound = arcade.load_sound(Path("project\sounds\jump.wav"))
         self.coin_collision_sound = arcade.load_sound(Path("project\sounds\coins.mp3"))
         self.game_over_sound = arcade.load_sound(Path("project\sounds\game_over.wav"))
+        self.shoot_projectile = arcade.load_sound(Path("project\sounds\shooting.mp3"))
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.Q:
@@ -85,7 +87,10 @@ class Game(arcade.View):
             self.player.change_x = 5
 
         if symbol == arcade.key.SPACE:
-            self.spawner.spawn_projectile(self.player, self.list_of_object_list)
+            if self.player.can_shoot():
+                arcade.play_sound(self.shoot_projectile)
+                self.spawner.spawn_projectile(self.player, self.list_of_object_list)
+                self.player.projectiles -= 1
 
     def on_key_release(self, symbol, modifiers):
         if (
@@ -127,6 +132,7 @@ class Game(arcade.View):
         for projectile in self.list_of_object_list["projectiles"]:
             if projectile.left > constants.WIDTH:
                 projectile.remove(self.list_of_object_list)
+
             killed_enemy = projectile.collides_with_list(self.list_of_object_list["enemies"])
             if len(killed_enemy) > 0:
                 self.score += 5
@@ -140,6 +146,12 @@ class Game(arcade.View):
             arcade.play_sound(self.coin_collision_sound)
             self.score += collided_coin[0].get_score()
             collided_coin[0].obtained(self.list_of_object_list)
+
+        # refill collision
+        obtained_refill = self.player.collides_with_list(self.list_of_object_list["refill"])
+        if len(obtained_refill) > 0:
+            self.player.projectiles += obtained_refill[0].get_value()
+            obtained_refill[0].obtained(self.list_of_object_list)
 
         # enemy collision
         collided_enemy = self.player.collides_with_list(
@@ -190,6 +202,10 @@ class Game(arcade.View):
 
         lives_text = f"Lives: {self.player.get_lives()}"
         arcade.draw_text(lives_text, 200, constants.HEIGHT -
+                         28, arcade.csscolor.BLACK, 18)
+
+        projectile_text = f"Projectiles: {self.player.projectiles}"
+        arcade.draw_text(projectile_text, 390, constants.HEIGHT -
                          28, arcade.csscolor.BLACK, 18)
 
     def pan_camera(self):
@@ -362,7 +378,7 @@ class GameOverView(arcade.View):
         f.close()
 
     def update_highscores(self):
-        for i in range(len(self.score_list) - 1):
+        for i in range(len(self.score_list)):
             split_line = self.score_list[i].split()
             if self.curr_score > int(split_line[0]):
                 initials = ""

@@ -4,6 +4,7 @@ from game.platform import Platform
 from game.coin import Coin
 from game.enemy import Enemy
 from game.projectile import Projectile
+from game.refill import Refill
 from pathlib import Path
 
 platform_sprites = [
@@ -20,11 +21,16 @@ class Spawner():
         object_list["dynamics"].append(platform)
         object_list["all"].append(platform)
 
-        if random.randint(1, 2) == 1:
+        chance = random.randint(1, 3)
+        if chance == 1:
             self.spawn_coin(platform, object_list)
-        elif 2:
+            
+        elif chance == 2:
             if score > 1:
                 self.spawn_enemy(platform, object_list)
+        elif chance == 3:
+            if random.randint(1, 2) == 1:
+                self.spawn_refill(platform, object_list)
 
     def spawn_coin(self, platform, object_list):
         Coin(Path("project\\art\coin_ph.png"), constants.SCALE, platform, object_list)
@@ -33,4 +39,7 @@ class Spawner():
         Enemy(Path("project\\art\enemy_ph.png"), constants.SCALE, platform, object_list)
 
     def spawn_projectile(self, player, object_list):
-        Projectile(Path("project\\art\missiles.png"), constants.SCALE, player, object_list)
+        Projectile(Path("project\\art\projectile.png"), constants.SCALE, player, object_list)
+
+    def spawn_refill(self, platform, object_list):
+        Refill(Path("project\\art\\refill.png"), constants.SCALE, platform, object_list)
