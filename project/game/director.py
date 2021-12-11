@@ -1,3 +1,4 @@
+from os import kill
 import arcade
 import random
 
@@ -5,6 +6,7 @@ from arcade import physics_engines
 from game import constants
 from game.spawner import Spawner
 from game.player import Player
+from pathlib import Path
 
 
 class Game(arcade.View):
@@ -23,6 +25,7 @@ class Game(arcade.View):
             "dynamics": arcade.SpriteList(),
             "coins": arcade.SpriteList(),
             "enemies": arcade.SpriteList(),
+            "projectiles": arcade.SpriteList(),
             "all": arcade.SpriteList()
         }
 
@@ -43,11 +46,11 @@ class Game(arcade.View):
         arcade.set_background_color(arcade.color.SKY_BLUE)
 
         self.player = Player(
-            "project\\art\character_ph.png", constants.SCALE)
+            Path("project\\art\character_ph.png"), constants.SCALE)
         self.list_of_object_list["all"].append(self.player)
 
         ground = arcade.Sprite(
-            "project\\art\lg_platform_ph.png", constants.SCALE)
+            Path("project\\art\lg_platform_ph.png"), constants.SCALE)
         ground.top = 64
         ground.left = 0
         # Testing enemy logic
@@ -60,6 +63,10 @@ class Game(arcade.View):
         for _ in range(6):
             self.spawner.spawn_platform(self.score, self.list_of_object_list)
 
+        self.jump_sound = arcade.load_sound(Path("project\sounds\jump.wav"))
+        self.coin_collision_sound = arcade.load_sound(Path("project\sounds\coins.mp3"))
+        self.game_over_sound = arcade.load_sound(Path("project\sounds\game_over.wav"))
+
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.Q:
             arcade.close_window()
@@ -69,12 +76,16 @@ class Game(arcade.View):
 
         if (symbol == arcade.key.W or symbol == arcade.key.UP) and self.physics_engine.can_jump():
             self.player.change_y = 20  # JUMP
+            arcade.play_sound(self.jump_sound)
 
         if symbol == arcade.key.A or symbol == arcade.key.LEFT:
             self.player.change_x = -5
 
         if symbol == arcade.key.D or symbol == arcade.key.RIGHT:
             self.player.change_x = 5
+
+        if symbol == arcade.key.SPACE:
+            self.spawner.spawn_projectile(self.player, self.list_of_object_list)
 
     def on_key_release(self, symbol, modifiers):
         if (
@@ -94,8 +105,9 @@ class Game(arcade.View):
             self.player.change_x = 0
 
     def on_update(self, delta_time: float):
-        # if player is still alive
+        # if player is dead
         if self.player.get_lives() < 1:
+            arcade.play_sound(self.game_over_sound)
             view = GameOverView(self.score)
             self.window.show_view(view)
 
@@ -111,10 +123,21 @@ class Game(arcade.View):
             # physics updates
             self.physics_engine.update()
 
+        # projectile physics
+        for projectile in self.list_of_object_list["projectiles"]:
+            if projectile.left > constants.WIDTH:
+                projectile.remove(self.list_of_object_list)
+            killed_enemy = projectile.collides_with_list(self.list_of_object_list["enemies"])
+            if len(killed_enemy) > 0:
+                self.score += 5
+                killed_enemy[0].remove(self.list_of_object_list)
+                projectile.remove(self.list_of_object_list)
+
         # coin collision
         collided_coin = self.player.collides_with_list(
             self.list_of_object_list["coins"])
         if len(collided_coin) > 0:
+            arcade.play_sound(self.coin_collision_sound)
             self.score += collided_coin[0].get_score()
             collided_coin[0].obtained(self.list_of_object_list)
 
@@ -122,9 +145,6 @@ class Game(arcade.View):
         collided_enemy = self.player.collides_with_list(
             self.list_of_object_list["enemies"])
         if len(collided_enemy) > 0:
-            if self.player._get_bottom() + 15 >= collided_enemy[0]._get_top():
-                self.score += 5
-                self.player.lives += 1
             self.player.lives -= collided_enemy[0].get_damage()
             collided_enemy[0].remove(self.list_of_object_list)
 
@@ -154,6 +174,7 @@ class Game(arcade.View):
         if self.player.right > constants.WIDTH/2:
             self.player.right = constants.WIDTH/2
         if self.player.bottom < 0:
+            arcade.play_sound(self.game_over_sound)
             view = GameOverView(self.score)
             self.window.show_view(view)
         if self.player.left < 0:
@@ -335,7 +356,7 @@ class GameOverView(arcade.View):
             self.inputs.pop(0)
 
     def fetch_highscores(self):
-        f = open("project\game\highscores.txt", "r")
+        f = open(Path("project\game\highscores.txt"), "r")
 
         self.score_list = f.readlines()
         f.close()
@@ -351,6 +372,6 @@ class GameOverView(arcade.View):
                 self.score_list.pop(-1)
                 break
         
-        f = open("project\game\highscores.txt", "w")
+        f = open(Path("project\game\highscores.txt"), "w")
         f.writelines(self.score_list)
         f.close()
