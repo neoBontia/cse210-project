@@ -3,11 +3,13 @@ from game import constants
 from game.platform import Platform
 from game.coin import Coin
 from game.enemy import Enemy
+from game.projectile import Projectile
+from pathlib import Path
 
 platform_sprites = [
-    "project\\art\sm_platform_ph.png",
-    "project\\art\md_platform_ph.png",
-    "project\\art\lg_platform_ph.png"
+    Path("project\\art\sm_platform_ph.png"),
+    Path("project\\art\md_platform_ph.png"),
+    Path("project\\art\lg_platform_ph.png")
 ]
 
 class Spawner():
@@ -25,7 +27,10 @@ class Spawner():
                 self.spawn_enemy(platform, object_list)
 
     def spawn_coin(self, platform, object_list):
-        Coin("project\\art\coin_ph.png", constants.SCALE, platform, object_list)
+        Coin(Path("project\\art\coin_ph.png"), constants.SCALE, platform, object_list)
 
     def spawn_enemy(self, platform, object_list):
-        Enemy("project\\art\enemy_ph.png", constants.SCALE, platform, object_list)
+        Enemy(Path("project\\art\enemy_ph.png"), constants.SCALE, platform, object_list)
+
+    def spawn_projectile(self, player, object_list):
+        Projectile(Path("project\\art\missiles.png"), constants.SCALE, player, object_list)
