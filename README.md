@@ -13,6 +13,6 @@ in BYU-Idaho.
 * Arcade
 
 ### Authors
-* #### Neo Adam Bontia
-  #### Vincent Jularbal
-  #### Esther Ezimadu
+ #### Neo Adam Bontia
+ #### Vincent Jularbal
+ #### Esther Ezimadu
